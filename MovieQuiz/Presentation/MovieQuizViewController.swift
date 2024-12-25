@@ -2,37 +2,6 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     
-    // MARK: - Structs
-    
-    private struct QuizQuestion {
-        // строка с названием фильма,
-        // совпадает с названием картинки афиши фильма в Assets
-        let image: String
-        // строка с вопросом о рейтинге фильма
-        let text: String
-        // булевое значение (true, false), правильный ответ на вопрос
-        let correctAnswer: Bool
-    }
-    
-    private struct QuizStepViewModel {
-        // картинка с афишей фильма с типом UIImage
-        let image: UIImage
-        // строка с вопросом о рейтинге фильма
-        let question: String
-        // строка с порядковым номером этого вопроса (ex. "1/10")
-        let questionNumber: String
-    }
-    
-    // для состояния "Результат квиза"
-    private struct QuizResultsViewModel {
-        // строка с заголовком алерта
-        let title: String
-        // строка с текстом о количестве набранных очков
-        let text: String
-        // текст для кнопки алерта
-        let buttonText: String
-    }
-    
     // MARK: - IB Outlets
     
     @IBOutlet private var textLabel: UILabel!
@@ -40,6 +9,12 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var noButton: UIButton!
+    
+    // MARK: - Public Properties
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     // MARK: - Private Properties
     
@@ -96,10 +71,6 @@ final class MovieQuizViewController: UIViewController {
         let currentQuizQuestion = questions[currentQuestionIndex]
         let currentQuizViewModel = convert(model: currentQuizQuestion)
         show(quiz: currentQuizViewModel)
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
     }
     
     // MARK: - IB Actions
@@ -168,16 +139,14 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         
-        yesButton.isUserInteractionEnabled = false
-        noButton.isUserInteractionEnabled = false
+        setButtonsEnabled(isEnabled: false)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.imageView.layer.borderColor = UIColor.clear.cgColor
             
             self.showNextQuestionOrResults()
             
-            self.yesButton.isUserInteractionEnabled = true
-            self.noButton.isUserInteractionEnabled = true
+            self.setButtonsEnabled(isEnabled: true)
         }
     }
     
@@ -198,6 +167,41 @@ final class MovieQuizViewController: UIViewController {
             
             show(quiz: nextQuizViewModel)
         }
+    }
+    
+    // приватный метод, который включает/выключает кнопки да/нет
+    private func setButtonsEnabled(isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
+    }
+    
+    // MARK: - Types
+    
+    private struct QuizQuestion {
+        /// строка с названием фильма, совпадает с названием картинки афиши фильма в Assets
+        let image: String
+        /// строка с вопросом о рейтинге фильма
+        let text: String
+        /// булевое значение (true, false), правильный ответ на вопрос
+        let correctAnswer: Bool
+    }
+    
+    private struct QuizStepViewModel {
+        /// картинка с афишей фильма с типом UIImage
+        let image: UIImage
+        /// строка с вопросом о рейтинге фильма
+        let question: String
+        /// строка с порядковым номером этого вопроса (ex. "1/10")
+        let questionNumber: String
+    }
+    
+    private struct QuizResultsViewModel {
+        /// строка с заголовком алерта
+        let title: String
+        /// строка с текстом о количестве набранных очков
+        let text: String
+        /// текст для кнопки алерта
+        let buttonText: String
     }
 }
 
