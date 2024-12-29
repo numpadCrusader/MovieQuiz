@@ -22,6 +22,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
+    private var statisticService: StatisticServiceProtocol?
     private var currentQuestion: QuizQuestion?
     private lazy var alertPresenter = AlertPresenter(viewController: self)
     
@@ -29,6 +30,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        statisticService = StatisticService()
         
         let questionFactory = QuestionFactory()
         questionFactory.delegate = self
@@ -95,9 +98,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // приватный метод для показа результатов раунда квиза
     private func show(quiz result: QuizResultsViewModel) {
+        statisticService?.store(correct: correctAnswers, total: questionsAmount)
+        
+        let alertMessage = buildAlertMessage(from: result.text)
+        
         alertPresenter.showAlert(with: AlertModel(
             title: result.title,
-            message: result.text,
+            message: alertMessage,
             buttonText: result.buttonText,
             completion: { [weak self] in
                 self?.currentQuestionIndex = 0
@@ -148,5 +155,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func setButtonsEnabled(isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
+    }
+    
+    private func buildAlertMessage(from initialMessage: String) -> String {
+        guard let statisticService = self.statisticService else { return initialMessage }
+        
+        let currentGameResult = initialMessage + "\n"
+        let allGamesPlayed = "Количество сыгранных квизов: \(statisticService.gamesCount)\n"
+        let record = "Рекорд: \(statisticService.bestGame.toString())\n"
+        let accuracy = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        
+        return currentGameResult + allGamesPlayed + record + accuracy
     }
 }
