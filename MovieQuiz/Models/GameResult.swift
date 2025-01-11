@@ -12,13 +12,11 @@ struct GameResult {
     let total: Int
     let date: Date
     
-    // метод сравнения по количеству верных ответов
-    func isBetterThan(_ another: GameResult) -> Bool {
-        correct > another.correct
+    var stringRepresentation: String {
+       "\(correct)/\(total) (\(date.dateTimeString))"
     }
     
-    // метод для вывода форматированной строки
-    func toString() -> String {
-        return "\(correct)/\(total) (\(date.dateTimeString))"
+    func isBetterThan(_ another: GameResult) -> Bool {
+        correct > another.correct
     }
 }

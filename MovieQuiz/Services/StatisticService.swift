@@ -55,7 +55,7 @@ extension StatisticService: StatisticServiceProtocol {
     
     var totalAccuracy: Double {
         get {
-            guard correctAnswers != 0 else { return Double(0) }
+            guard correctAnswers != 0 else { return 0 }
             
             return Double((correctAnswers * 100)/(gamesCount * 10))
         }

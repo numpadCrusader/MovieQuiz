@@ -60,10 +60,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             return
         }
         
-        let currentQuestionCorrectAnswer = currentQuestion.correctAnswer
         let userAnswer = true
-        
-        showAnswerResult(isCorrect: currentQuestionCorrectAnswer == userAnswer)
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer == userAnswer)
     }
     
     // метод вызывается, когда пользователь нажимает на кнопку "Нет"
@@ -72,10 +70,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             return
         }
         
-        let currentQuestionCorrectAnswer = currentQuestion.correctAnswer
         let userAnswer = false
-        
-        showAnswerResult(isCorrect: currentQuestionCorrectAnswer == userAnswer)
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer == userAnswer)
     }
     
     // MARK: - Private Methods
@@ -83,7 +79,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // метод конвертации, который принимает вопрос и возвращает вью модель для экрана вопроса
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(named: model.imageName) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -158,13 +154,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func buildAlertMessage(from initialMessage: String) -> String {
-        guard let statisticService = self.statisticService else { return initialMessage }
+        guard let statisticService = statisticService else { return initialMessage }
         
-        let currentGameResult = initialMessage + "\n"
-        let allGamesPlayed = "Количество сыгранных квизов: \(statisticService.gamesCount)\n"
-        let record = "Рекорд: \(statisticService.bestGame.toString())\n"
-        let accuracy = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        let alertMessage = """
+        \(initialMessage)
+        Количество сыгранных квизов: \(statisticService.gamesCount)
+        Рекорд: \(statisticService.bestGame.stringRepresentation)
+        Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
+        """
         
-        return currentGameResult + allGamesPlayed + record + accuracy
+        return alertMessage
     }
 }
