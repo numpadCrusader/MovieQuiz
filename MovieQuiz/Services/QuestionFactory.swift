@@ -33,11 +33,11 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 print("Failed to load image")
             }
             
-            let rating = Int(Float(movie.rating) ?? 0)
+            let rating = Float(movie.rating) ?? 0
             let randomInt = Int.random(in: 7...9)
             
             let text = "Рейтинг этого фильма больше чем \(randomInt)?"
-            let correctAnswer = rating > randomInt
+            let correctAnswer = rating > Float(randomInt)
             
             let question = QuizQuestion(imageData: imageData,
                                         text: text,
